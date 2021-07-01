@@ -70,5 +70,5 @@ def delete_project(id):
     if current_id == project.user_id:
         db.session.delete(project)
         db.session.commit()
-        return {"success": "success"}, 200
+        return project.to_dict()
     return {"errors": "Not Authorized"}, 401
