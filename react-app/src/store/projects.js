@@ -25,18 +25,17 @@ const put_project = (project) => ({
 });
 
 const delete_project = (project) => ({
-    type: PUT_PROJECT,
+    type: DELETE_PROJECT,
     payload: project,
 });
 
-const initialState = { projects: null };
 
 export const getProjects = () => async (dispatch) => {
     const response = await fetch('/api/projects', {
         headers: { 'Content-Type' : 'application/json' }
     });
 
-    const result = response.json();
+    const result = await response.json();
     if (result.errors) { return result.errors };
 
     dispatch(get_projects(result.projects));
@@ -48,7 +47,7 @@ export const getProject = (id) => async (dispatch) => {
         headers: { 'Content-Type' : 'application/json' }
     });
 
-    const result = response.json();
+    const result = await response.json();
     if (result.errors) { return result.errors };
 
     dispatch(get_project(result));
@@ -63,7 +62,7 @@ export const postProject = (form) => async (dispatch) => {
         body: JSON.stringify(form),
     });
 
-    const result = response.json();
+    const result = await response.json();
     if (result.errors) { return result.errors };
 
     dispatch(post_project(result));
@@ -78,7 +77,7 @@ export const putProject = (form, id) => async (dispatch) => {
         body: JSON.stringify(form),
     });
 
-    const result = response.json();
+    const result = await response.json();
     if (result.errors) { return result.errors };
 
     dispatch(put_project(result));
@@ -92,38 +91,39 @@ export const deleteProject = (id) => async (dispatch) => {
         credentials: 'include',
     });
 
-    const result = response.json();
+    const result = await response.json();
     if (result.errors) { return result.errors };
 
     dispatch(delete_project(result));
     return;
 }
 
-export default function projects(state = initialState, action) {
+export default function projects(state = [], action) {
     switch (action.type) {
         case GET_PROJECTS:
-            const projects = {};
+            /* const projects = {};
 
             action.payload.forEach((project) => {
                 projects[project.id] = project;
             });
 
             return { ...state, ...projects };
+            */
+
+            return [...action.payload ]
 
         case GET_PROJECT:
-            return { ...state, project: action.payload };
+            return { project :  action.payload } ;
 
         case POST_PROJECT:
-            state[action.payload.id] = action.payload;
-            return { ...state };
+            return [ ...state, action.payload ];
 
         case PUT_PROJECT:
-            state[action.payload.id] = action.payload;
-            return { ...state };
+            return [ ...state, action.payload ];
 
         case DELETE_PROJECT:
-            delete state[action.payload.id]
-            return { ...state };
+            state = state.filter(({ id }) => id !== action.payload.id)
+            return [ ...state ];
         
         default:
             return state;

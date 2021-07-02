@@ -18,6 +18,7 @@ function ProjectForm() {
         if (response.errors) {
             setErrors(response.errors);
         }
+        setName('')
     };
 
     function updateName(e) {

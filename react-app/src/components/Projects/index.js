@@ -1,15 +1,32 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import ProjectForm from './ProjectForm';
-import { getProjects } from '../../store/projects';
+import { getProjects, deleteProject } from '../../store/projects';
 
 function Projects() {
-    const user = useSelector(state => state.session.user)
-    const projects = useSelector(state => state.projects)
-    console.log(projects)
+    const user = useSelector(state => state.session.user);
+    const projects = useSelector(state => state.projects);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getProjects())
+    }, [dispatch] );
+
+    function deleteButton(id) {
+        dispatch(deleteProject(id))
+    }
+
+
     return (
         <>
+            { user && <ProjectForm /> }
+            { projects && projects.map(project => (
+                <div key={ project.id }>
+                    <p>{project.name}</p>
+                    <button onClick={() => deleteButton(project.id)}>Delete</button>
+                </div>
+            ))}
         </>
     )
 }
